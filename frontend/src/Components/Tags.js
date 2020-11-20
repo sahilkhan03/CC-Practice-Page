@@ -9,6 +9,7 @@ class Tags extends Component {
         super(props);
         this.state = {
             "tags": [],
+            "activeType": 0, //1 for "author", 2 for "actual_tag", 0 for all
             "redirect": false
         }
         this.setRedirect = this.setRedirect.bind(this)
@@ -22,6 +23,7 @@ class Tags extends Component {
                 console.log(res);
                 this.setState({ "tags": res })
             })
+
 
     }
 
@@ -43,24 +45,42 @@ class Tags extends Component {
         return (
             <div>
                 {this.renderRedirect()}
-                {
-                    this.state.tags.map(item => (
-                        <li id={item.id} onClick={e =>
-                            MySwal.fire({
-                                title: item.tag_name,
-                                text: "Type: " + item.type + "  |  Count: " + item.count,
-                                showCancelButton: true,
-                                confirmButtonColor: '#3085d6',
-                                cancelButtonColor: '#d33',
-                                confirmButtonText: 'See Problems'
-                            }).then((result) => {
-                                if (result.value){
-                                    this.setRedirect(item)
-                                }
-                            })
-                        }> {item.tag_name} </li>
-                    ))
-                }
+                <div>
+                    <h3>Categories: </h3>
+                    <button onClick = {(e) => this.setState({
+                        "activeType" : 1
+                    })}> Author</button> <br></br>
+                    <button onClick={(e) => this.setState({
+                        "activeType": 2
+                    })}>Concepts</button>
+                    <button onClick={(e) => this.setState({
+                        "activeType": 0
+                    })}>Show All</button>
+
+                    {
+                        this.state.tags.map(item => {
+                            let curType = this.state.activeType
+                            if(curType === 0 || (curType === 1 && item.type === "author") || (curType === 2 && item.type === "actual_tag"))
+                            return (
+                            <li id={item.id} onClick={e =>
+                                MySwal.fire({
+                                    title: item.tag_name,
+                                    text: "Type: " + item.type + "  |  Count: " + item.count,
+                                    showCancelButton: true,
+                                    confirmButtonColor: '#3085d6',
+                                    cancelButtonColor: '#d33',
+                                    confirmButtonText: 'See Problems'
+                                }).then((result) => {
+                                    if (result.value) {
+                                        this.setRedirect(item)
+                                    }
+                                })
+                            }> {item.tag_name} </li>
+                            )
+                            return null
+                    })
+                    }
+                </div>
             </div>
         )
     }
