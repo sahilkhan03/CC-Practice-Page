@@ -1,5 +1,9 @@
 import React, { Component } from 'react';
 import { Redirect } from 'react-router-dom';
+import Swal from 'sweetalert2'
+import withReactContent from 'sweetalert2-react-content'
+
+
 class Tags extends Component {
     constructor(props) {
         super(props);
@@ -35,12 +39,26 @@ class Tags extends Component {
     }
 
     render() {
+        const MySwal = withReactContent(Swal)
         return (
             <div>
                 {this.renderRedirect()}
                 {
                     this.state.tags.map(item => (
-                        <li id={item.id} onClick={e => { this.setRedirect(item) }}> {item.tag_name} </li>
+                        <li id={item.id} onClick={e =>
+                            MySwal.fire({
+                                title: item.tag_name,
+                                text: "Type: " + item.type + "  |  Count: " + item.count,
+                                showCancelButton: true,
+                                confirmButtonColor: '#3085d6',
+                                cancelButtonColor: '#d33',
+                                confirmButtonText: 'See Problems'
+                            }).then((result) => {
+                                if (result.value){
+                                    this.setRedirect(item)
+                                }
+                            })
+                        }> {item.tag_name} </li>
                     ))
                 }
             </div>
