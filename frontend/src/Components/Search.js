@@ -52,7 +52,7 @@ class Search extends Component {
                         }
                     </Col>
                 </Row>
-                <br></br>
+                <br />
                 <Row>
                     <Col>
                         <InputGroup className="mb-3">

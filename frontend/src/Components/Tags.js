@@ -2,6 +2,7 @@ import React, { Component } from 'react';
 import { Redirect } from 'react-router-dom';
 import Swal from 'sweetalert2'
 import withReactContent from 'sweetalert2-react-content'
+import { Tabs, Tab, Container, Row, Col, ListGroup, Button } from 'react-bootstrap';
 
 
 class Tags extends Component {
@@ -9,7 +10,7 @@ class Tags extends Component {
         super(props);
         this.state = {
             "tags": [],
-            "activeType": 0, //1 for "author", 2 for "actual_tag", 0 for all
+            "activeType": "all", 
             "redirect": false
         }
         this.setRedirect = this.setRedirect.bind(this)
@@ -45,42 +46,43 @@ class Tags extends Component {
         return (
             <div>
                 {this.renderRedirect()}
-                <div>
-                    <h3>Categories: </h3>
-                    <button onClick = {(e) => this.setState({
-                        "activeType" : 1
-                    })}> Author</button> <br></br>
-                    <button onClick={(e) => this.setState({
-                        "activeType": 2
-                    })}>Concepts</button>
-                    <button onClick={(e) => this.setState({
-                        "activeType": 0
-                    })}>Show All</button>
-
+                <Container fluid="md">
+                    <h2 className="d-flex justify-content-center">Tags</h2>
+                    <Tabs
+                        activeKey={this.state.activeType}
+                        onSelect={(k) => this.setState({ activeType: k })}
+                    >
+                        <Tab eventKey="all" title="All" />
+                        <Tab eventKey="author" title="Author" />
+                        <Tab eventKey="actual_tag" title="Concepts" />
+                    </Tabs>
+                    <ListGroup>
                     {
                         this.state.tags.map(item => {
                             let curType = this.state.activeType
-                            if(curType === 0 || (curType === 1 && item.type === "author") || (curType === 2 && item.type === "actual_tag"))
-                            return (
-                            <li id={item.id} onClick={e =>
-                                MySwal.fire({
-                                    title: item.tag_name,
-                                    text: "Type: " + item.type + "  |  Count: " + item.count,
-                                    showCancelButton: true,
-                                    confirmButtonColor: '#3085d6',
-                                    cancelButtonColor: '#d33',
-                                    confirmButtonText: 'See Problems'
-                                }).then((result) => {
-                                    if (result.value) {
-                                        this.setRedirect(item)
-                                    }
-                                })
-                            }> {item.tag_name} </li>
-                            )
+                            if (curType === "all" || curType === item.type)
+                                return (
+                                    <ListGroup.Item key={item.id} onClick={e =>
+                                        MySwal.fire({
+                                            title: item.tag_name,
+                                            text: "Type: " + item.type + "  |  Count: " + item.count,
+                                            showCancelButton: true,
+                                            confirmButtonColor: '#3085d6',
+                                            cancelButtonColor: '#d33',
+                                            confirmButtonText: 'See Problems'
+                                        }).then((result) => {
+                                            if (result.value) {
+                                                this.setRedirect(item)
+                                            }
+                                        })
+                                    }> {item.tag_name} 
+                                    </ListGroup.Item>
+                                )
                             return null
-                    })
+                        })
                     }
-                </div>
+                    </ListGroup>
+                </Container>
             </div>
         )
     }

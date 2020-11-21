@@ -4,6 +4,7 @@ import Problems from './Problems';
 import Search from './Search';
 import Tags from './Tags';
 import './App.css';
+import { Navbar, Nav } from 'react-bootstrap'
 class App extends Component {
     constructor(props) {
         super(props);
@@ -34,13 +35,19 @@ class App extends Component {
     removeAll() {
         let newSelectedTags = new Set()
         this.setState({
-            "selectedTags" : newSelectedTags
+            "selectedTags": newSelectedTags
         })
     }
 
     render() {
         return (
             <div className="App">
+                <Navbar bg="light" expand="lg">
+                    <Navbar.Brand href="/">Codechef Practice Page</Navbar.Brand>
+                    <Nav.Link href="/"> Search </Nav.Link>
+                    <Nav.Link href="/tags"> Tags </Nav.Link>
+                </Navbar>
+                <br/>
                 <Switch >
                     <Route path="/" exact render={props => <Search selectedTags={this.state.selectedTags} addTag={this.addTag} removeTag={this.removeTag} />} />
                     <Route path="/tags/problems/" exact render={props => <Problems removeAll={this.removeAll} selectedTags={Array.from(this.state.selectedTags)} />} />
