@@ -10,9 +10,10 @@ class Problems extends Component {
     componentDidMount() {
         if (this.props.selectedTags.length !== 0) {
             let list = ""
-            this.props.selectedTags.map(tag => (
-                list += tag.id + ","
-            ))
+            this.props.selectedTags.map(tag => {
+                tag = JSON.parse(tag)
+                return list += tag.id + ","
+            })
             list = list.slice(0, -1);
             console.log(list)
             fetch('/api/tags/' + list)

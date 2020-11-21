@@ -1,5 +1,6 @@
 import React, { Component } from 'react';
 import { Link } from 'react-router-dom';
+import { Container, Row, Col, ListGroup, Button, Badge, InputGroup, FormControl } from 'react-bootstrap';
 class Search extends Component {
     constructor(props) {
         super(props);
@@ -8,6 +9,7 @@ class Search extends Component {
             search: ""
         }
         this.handleChange = this.handleChange.bind(this)
+        this.addTag = this.addTag.bind(this)
     }
 
     async handleChange(e) {
@@ -22,28 +24,70 @@ class Search extends Component {
         }
     }
 
+    addTag(tag) {
+        this.props.addTag(tag);
+        this.setState({
+            searchResult: [],
+            search: ""
+        })
+    }
+
     render() {
         return (
-            <div>
-                {
-                    Array.from(this.props.selectedTags).map((item, index) => (
-                        <li key={item.id}>{item.tag_name} <span onClick={(e) => this.props.removeTag(item)}> x </span></li>
-                    ))
-                }
+            <Container fluid="md">
+                <Row>
+                    <Col sm={3}><h5 style={{ fontSize: "18px", paddingTop: "9px" }}><strong> Selected Tags: </strong></h5></Col>
+                    <Col style={{ paddingTop: "3px" }}>
+                        {
+                            Array.from(this.props.selectedTags).map((item, index) => {
+                                item = JSON.parse(item)
+                                return (
+                                    <Button variant="primary">
+                                        {item.tag_name} <Badge variant="light" onClick={(e) => this.props.removeTag(item)}>x</Badge>
+                                        <span className="sr-only">remove tag</span>
+                                    </Button>
+                                )
+                            }
+                            )
+                        }
+                    </Col>
+                </Row>
                 <br></br>
-                <div>
-                    <input style={{ border: "none" }} type="text" className="form-control" value={this.state.search} onChange={(e) => this.handleChange(e)} placeholder="Search" />
-                    <button disabled = {this.props.selectedTags.length === 0}> <Link to="/tags/problems/" > Search </Link> </button>
-                    <button> <Link to="/tags/" > Show All tags </Link> </button>
-                </div>
-                <div>
-                    {
-                        this.state.searchResult.map(tag => (
-                            <p key={tag.id} onClick={(e) => this.props.addTag(tag)}> {tag.tag_name} </p>
-                        ))
-                    }
-                </div>
-            </div>
+                <Row>
+                    <Col>
+                        <InputGroup className="mb-3">
+                            <FormControl
+                                placeholder="Search Tags"
+                                aria-label="Search Tags"
+                                aria-describedby="basic-addon2"
+                                style={{ border: "none" }}
+                                value={this.state.search}
+                                onChange={(e) => this.handleChange(e)}
+
+                            />
+                            <InputGroup.Append>
+                                <Link style={{ "text-decoration": "none" }} to="/tags/problems/" >
+                                    <Button variant="primary"> Search </Button>
+                                </Link>
+                                <Link style={{ "text-decoration": "none" }} to="/tags/" >
+                                    <Button variant="primary"> All tags </Button>
+                                </Link>
+                            </InputGroup.Append>
+                        </InputGroup>
+                    </Col>
+                </Row>
+                <Row>
+                    <Col>
+                        <ListGroup>
+                            {
+                                this.state.searchResult.map(tag => (
+                                    <ListGroup.Item key={tag.id} onClick={(e) => this.addTag(tag)}>{tag.tag_name}</ListGroup.Item>
+                                ))
+                            }
+                        </ListGroup>
+                    </Col>
+                </Row>
+            </Container>
         )
     }
 }

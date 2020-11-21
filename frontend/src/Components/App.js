@@ -17,7 +17,7 @@ class App extends Component {
 
     addTag(tag) {
         let newSelectedTags = this.state.selectedTags;
-        newSelectedTags.add(tag);
+        newSelectedTags.add(JSON.stringify(tag));
         this.setState({
             "selectedTags": newSelectedTags
         });
@@ -25,7 +25,7 @@ class App extends Component {
 
     removeTag(tag) {
         let newSelectedTags = this.state.selectedTags;
-        newSelectedTags.delete(tag);
+        newSelectedTags.delete(JSON.stringify(tag));
         this.setState({
             "selectedTags": newSelectedTags
         });
