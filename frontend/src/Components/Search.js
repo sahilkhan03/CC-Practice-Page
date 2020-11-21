@@ -81,7 +81,7 @@ class Search extends Component {
                         <ListGroup>
                             {
                                 this.state.searchResult.map(tag => (
-                                    <ListGroup.Item key={tag.id} onClick={(e) => this.addTag(tag)}>{tag.tag_name}</ListGroup.Item>
+                                    <ListGroup.Item key={tag.id} style={{"cursor": "pointer"}} onClick={(e) => this.addTag(tag)}>{tag.tag_name}</ListGroup.Item>
                                 ))
                             }
                         </ListGroup>

@@ -2,7 +2,7 @@ import React, { Component } from 'react';
 import { Redirect } from 'react-router-dom';
 import Swal from 'sweetalert2'
 import withReactContent from 'sweetalert2-react-content'
-import { Tabs, Tab, Container, Row, Col, ListGroup, Button } from 'react-bootstrap';
+import { Tabs, Tab, Container, ListGroup } from 'react-bootstrap';
 
 
 class Tags extends Component {
@@ -62,7 +62,7 @@ class Tags extends Component {
                             let curType = this.state.activeType
                             if (curType === "all" || curType === item.type)
                                 return (
-                                    <ListGroup.Item key={item.id} onClick={e =>
+                                    <ListGroup.Item key={item.id} style={{ "cursor": "pointer" }} onClick={e =>
                                         MySwal.fire({
                                             title: item.tag_name,
                                             text: "Type: " + item.type + "  |  Count: " + item.count,

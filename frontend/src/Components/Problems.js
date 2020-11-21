@@ -1,5 +1,6 @@
 import React, { Component } from 'react';
-import { Redirect } from 'react-router-dom';
+import { Link, Redirect } from 'react-router-dom';
+import { Jumbotron, Button, Container, ListGroup, Row } from 'react-bootstrap';
 class Problems extends Component {
     constructor(props) {
         super(props);
@@ -32,14 +33,56 @@ class Problems extends Component {
     render() {
         if (this.props.selectedTags.length === 0)
             return <Redirect to="/" ></Redirect>
+        if (this.state.problems.length === 0)
+            return (
+                <Container fluid="md">
+                    <Jumbotron>
+                        <h1>No Problems Found!</h1>
+                        <p> Try selecting different tags! </p>
+                        <p>
+                            <Link style={{ "text-decoration": "none" }} to="/" >
+                                <Button variant="primary">Go back to Search</Button>
+                            </Link>
+                        </p>
+                    </Jumbotron>
+                </Container>
+            )
         return (
-            <div>
-                {
-                    this.state.problems.map(item => (
-                        <a href={"https://www.codechef.com/problems/" + item.problemCode} target="_blank" rel="noopener noreferrer"> {item.problemName} </a>
-                    ))
-                }
-            </div>
+            <Container fluid="md">
+                <Row>
+                    <h5 style={{ fontSize: "18px", paddingTop: "15px" }}><strong> Selected Tags: </strong></h5>
+                </Row>
+                <Row>
+                    <ListGroup horizontal={"xl"}>
+                        {
+                            Array.from(this.props.selectedTags).map((item, index) => {
+                                item = JSON.parse(item)
+                                return (
+                                    <ListGroup.Item>
+                                        {item.tag_name}
+                                    </ListGroup.Item>
+                                )
+                            }
+                            )
+                        }
+                    </ListGroup>
+                </Row>
+                <br />
+                <Row>
+                    <h5 style={{ fontSize: "18px", paddingTop: "15px" }}><strong> Problems: </strong></h5> <br />
+                </Row>
+                <Row>
+                    <ListGroup>
+                        {
+                            this.state.problems.map(item => (
+                                <ListGroup.Item>
+                                    <a href={"https://www.codechef.com/problems/" + item.problemCode} target="_blank" rel="noopener noreferrer"> {item.problemName} </a>
+                                </ListGroup.Item>
+                            ))
+                        }
+                    </ListGroup>
+                </Row>
+            </Container>
         )
     }
 }

@@ -47,6 +47,7 @@ return function (App $app) {
             $sql = $sql." tag_id=".$tag_list[$i];
             if($i < $len - 1) $sql = $sql." or ";
         }
+        $sql .= " group by problems.problemCode";
         $stmt = $db->prepare($sql);
         $stmt->execute();
         $response->getBody()->write(json_encode($stmt->fetchAll(PDO::FETCH_ASSOC)));
