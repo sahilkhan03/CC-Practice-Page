@@ -1,12 +1,12 @@
 <?php return array (
   'root' => 
   array (
-    'pretty_version' => '4.1.0',
-    'version' => '4.1.0.0',
+    'pretty_version' => 'dev-master',
+    'version' => 'dev-master',
     'aliases' => 
     array (
     ),
-    'reference' => NULL,
+    'reference' => '2ba6a4cdffdf41c54ceab6aeac9340b326f6c00e',
     'name' => 'slim/slim-skeleton',
   ),
   'versions' => 
@@ -28,6 +28,15 @@
       array (
       ),
       'reference' => '3242caa9da7221a304b8f84eb9eaddae0a7cf422',
+    ),
+    'firebase/php-jwt' => 
+    array (
+      'pretty_version' => 'v5.2.0',
+      'version' => '5.2.0.0',
+      'aliases' => 
+      array (
+      ),
+      'reference' => 'feb0e820b8436873675fd3aca04f3728eb2185cb',
     ),
     'monolog/monolog' => 
     array (
@@ -423,12 +432,12 @@
     ),
     'slim/slim-skeleton' => 
     array (
-      'pretty_version' => '4.1.0',
-      'version' => '4.1.0.0',
+      'pretty_version' => 'dev-master',
+      'version' => 'dev-master',
       'aliases' => 
       array (
       ),
-      'reference' => NULL,
+      'reference' => '2ba6a4cdffdf41c54ceab6aeac9340b326f6c00e',
     ),
     'symfony/polyfill-ctype' => 
     array (

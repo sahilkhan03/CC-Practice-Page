@@ -6,6 +6,8 @@ use Psr\Http\Message\ResponseInterface as Response;
 use Psr\Http\Message\ServerRequestInterface as Request;
 use Slim\Interfaces\RouteCollectorProxyInterface as Group;
 
+require 'Authentication.php';
+
 //DB Connection
 function getCon() {
     $db = new PDO("mysql:host=127.0.0.1;dbname=cc_project","root","");
@@ -51,6 +53,84 @@ return function (App $app) {
         $stmt = $db->prepare($sql);
         $stmt->execute();
         $response->getBody()->write(json_encode($stmt->fetchAll(PDO::FETCH_ASSOC)));
+        return $response;
+    });
+
+    //Signup
+    $app->post('/api/signup', function (Request $request, Response $response, $args) {
+        $db = getCon();
+        $username = $_POST['username'];
+        $password = $_POST['password'];
+        if(!$username or !$password) {
+            $res = [
+                'code' => 9006,
+                'message' => 'Invalid data recieved'
+            ];
+            $response->getBody()->write(json_encode($res));
+            return $response;
+        } 
+        $sql = "SELECT * from users where username='".$username."'";
+        $stmt = $db->prepare($sql);
+        $stmt->execute();
+        $user = $stmt->fetchAll(PDO::FETCH_ASSOC);
+        if(count($user)) { 
+            // If user already exists
+            $res = [
+                'code' => 9004,
+                'message' => 'User already exist'
+            ];
+            $response->getBody()->write(json_encode($res));
+            return $response;
+        }
+        // Create new user
+        $sql = "INSERT into users (username, password) values (:username, :password)";
+        $var = [
+            "username" => $username,
+            "password" => md5($password)
+        ];
+        $db->prepare($sql)->execute($var); 
+        $res = [
+            'code' => 9001,
+            'message' => 'Success',
+            'token' => Authentication::generate_token($username)
+        ];
+        $response->getBody()->write(json_encode($res));
+        return $response;
+    });
+
+    //Login
+    $app->post('/api/login', function (Request $request, Response $response, $args) {
+        $db = getCon();
+        $username = $_POST['username'];
+        $password = $_POST['password'];
+        if(!$username or !$password) {
+            $res = [
+                'code' => 9006,
+                'message' => 'Invalid data recieved'
+            ];
+            $response->getBody()->write(json_encode($res));
+            return $response;
+        } 
+        $sql = "SELECT * from users where username='".$username."'";
+        $stmt = $db->prepare($sql);
+        $stmt->execute();
+        $user = $stmt->fetch(PDO::FETCH_ASSOC);
+        if(!$user or md5($password) != $user['password']) { 
+            // Incorrect username/password
+            $res = [
+                'code' => 9003,
+                'message' => 'Username or Password incorrect'
+            ];
+            $response->getBody()->write(json_encode($res));
+            return $response;
+        } 
+        $res = [
+            'code' => 9001,
+            'message' => 'Success',
+            'username' => $username,
+            'token' => Authentication::generate_token($username)
+        ];
+        $response->getBody()->write(json_encode($res));
         return $response;
     });
 };
