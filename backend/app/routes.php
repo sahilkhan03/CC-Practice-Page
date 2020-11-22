@@ -133,4 +133,37 @@ return function (App $app) {
         $response->getBody()->write(json_encode($res));
         return $response;
     });
+
+    //Get User
+    $app->get('/api/getUser', function (Request $request, Response $response, $args) {
+        if(!isset($_SERVER['HTTP_AUTHORIZATION'])) {
+            $res = [
+                'code' => 9003,
+                'message' => 'Authorization header not found'
+            ];
+            $response->getBody()->write(json_encode($res));
+            return $response;
+        }
+        $header = trim($_SERVER['HTTP_AUTHORIZATION']);
+        $token = null;
+        if(preg_match('/Bearer\s(\S+)/', $header, $matches))
+            $token = $matches[1];
+        if(!$token) {
+            $res = [
+                'code' => 9003,
+                'message' => 'Authorization header not found'
+            ];
+            $response->getBody()->write(json_encode($res));
+            return $response;
+        }
+        $username = Authentication::decode_token($token)->username;
+        $res = [
+            'code' => 9001,
+            'message' => 'Success',
+            'username' => $username
+        ];
+        $response->getBody()->write(json_encode($res));
+        return $response;
+    });    
+
 };

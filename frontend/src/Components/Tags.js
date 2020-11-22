@@ -1,20 +1,17 @@
 import React, { Component } from 'react';
-import { Redirect } from 'react-router-dom';
 import Swal from 'sweetalert2'
+import { withRouter } from 'react-router-dom'
 import withReactContent from 'sweetalert2-react-content'
 import { Tabs, Tab, Container, ListGroup } from 'react-bootstrap';
-
 
 class Tags extends Component {
     constructor(props) {
         super(props);
         this.state = {
             "tags": [],
-            "activeType": "all", 
-            "redirect": false
+            "activeType": "all",
         }
         this.setRedirect = this.setRedirect.bind(this)
-        this.renderRedirect = this.renderRedirect.bind(this)
     }
     componentDidMount() {
         this.props.removeAll()
@@ -24,28 +21,17 @@ class Tags extends Component {
                 console.log(res);
                 this.setState({ "tags": res })
             })
-
-
     }
 
     setRedirect(item) {
         this.props.addTag(item);
-        this.setState({
-            redirect: true
-        })
-    }
-
-    renderRedirect() {
-        if (this.state.redirect) {
-            return <Redirect to='/tags/problems/' />
-        }
+        this.props.history.push('/tags/problems/')
     }
 
     render() {
         const MySwal = withReactContent(Swal)
         return (
             <div>
-                {this.renderRedirect()}
                 <Container fluid="md">
                     <h2 className="d-flex justify-content-center">Tags</h2>
                     <Tabs
@@ -87,4 +73,4 @@ class Tags extends Component {
         )
     }
 }
-export default Tags;
+export default withRouter(Tags);

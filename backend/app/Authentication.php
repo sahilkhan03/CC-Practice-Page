@@ -14,5 +14,7 @@ class Authentication
         ];
         return JWT::encode($payload, SECRET_KEY);
     }
-
+    function decode_token($token) {
+        return JWT::decode($token, SECRET_KEY, array('HS256'));
+    }
 }
