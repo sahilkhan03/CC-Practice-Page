@@ -6,42 +6,69 @@ use Psr\Http\Message\ResponseInterface as Response;
 use Psr\Http\Message\ServerRequestInterface as Request;
 use Slim\Interfaces\RouteCollectorProxyInterface as Group;
 
-require 'Authentication.php';
-
-//DB Connection
-function getCon() {
-    $db = new PDO("mysql:host=127.0.0.1;dbname=cc_project","root","");
-    $db->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
-    return $db;
-}
+require 'Database.php';
+require 'Authentication.php'; 
 
 return function (App $app) {
     //Fetch all tags
-    $app->get('/api/tags/', function (Request $request, Response $response, $args) {
-        $db = getCon();
+    $app->get('/api/tags', function (Request $request, Response $response, $args) {
+        $db = Database::getCon();
         $sql = "SELECT * FROM tags";
         $stmt = $db->prepare($sql);
         $stmt->execute();
-        $response->getBody()->write(json_encode($stmt->fetchAll(PDO::FETCH_ASSOC)));
+        $res = $stmt->fetchAll(PDO::FETCH_ASSOC);
+        if(isset($_SERVER['HTTP_AUTHORIZATION'])) {
+            //Fetch private tags as well
+            $userData = Authentication::validate($_SERVER['HTTP_AUTHORIZATION']);
+            if($userData) {
+                //valid token
+                $sql = "SELECT DISTINCT tag_name FROM private_tags WHERE username = (:username)";
+                $stmt = $db->prepare($sql);
+                $stmt->execute(['username' => $userData['username']]);
+                while($row = $stmt->fetch(PDO::FETCH_ASSOC)) {
+                    $res[] = (object)['tag_name' => $row['tag_name'], 
+                    'type' => 'private'];
+                }
+            }
+        }
+        $response->getBody()->write(json_encode($res));
         return $response;
     });
 
     //Search tags
     $app->get('/api/tags/search/{val}', function (Request $request, Response $response, $args) {
-        $db = getCon();
+        $db = Database::getCon();
         $sql = "SELECT * FROM tags WHERE tag_name LIKE '%";
         $sql .=$args['val'];
         $sql .= "%' ";
         $sql .= "LIMIT 10";
         $stmt = $db->prepare($sql);
         $stmt->execute();
-        $response->getBody()->write(json_encode($stmt->fetchAll(PDO::FETCH_ASSOC)));
+        $res = $stmt->fetchAll(PDO::FETCH_ASSOC);
+        if(isset($_SERVER['HTTP_AUTHORIZATION'])) {
+            //Fetch private tags as well
+            $userData = Authentication::validate($_SERVER['HTTP_AUTHORIZATION']);
+            if($userData) {
+                //valid token
+                $sql = "SELECT DISTINCT tag_name FROM private_tags WHERE username = (:username) and tag_name LIKE '%";
+                $sql .=$args['val'];
+                $sql .= "%' ";
+                $sql .= "LIMIT 10";
+                $stmt = $db->prepare($sql);
+                $stmt->execute(['username' => $userData['username']]);
+                while($row = $stmt->fetch(PDO::FETCH_ASSOC)) {
+                    $res[] = (object)['tag_name' => $row['tag_name'], 
+                    'type' => 'private'];
+                }
+            }
+        }
+        $response->getBody()->write(json_encode($res));
         return $response;
     });
     
     //Fetch by tag ids
     $app->get('/api/tags/{tag_id}', function (Request $request, Response $response, $args) {
-        $db = getCon();
+        $db = Database::getCon();
         $tag_list = explode(",", $args['tag_id']);
         $sql = "SELECT problems.id, problems.contestCode, problems.problemCode, problems.problemName, problems.author, problems.challengeType, problems.successfulSubmissions FROM tag_problem join problems on problems.id = problem_id where ";
         $len = count($tag_list);
@@ -58,7 +85,7 @@ return function (App $app) {
 
     //Signup
     $app->post('/api/signup', function (Request $request, Response $response, $args) {
-        $db = getCon();
+        $db = Database::getCon();
         $username = $_POST['username'];
         $password = $_POST['password'];
         if(!$username or !$password) {
@@ -101,7 +128,7 @@ return function (App $app) {
 
     //Login
     $app->post('/api/login', function (Request $request, Response $response, $args) {
-        $db = getCon();
+        $db = Database::getCon();
         $username = $_POST['username'];
         $password = $_POST['password'];
         if(!$username or !$password) {
@@ -145,26 +172,24 @@ return function (App $app) {
             $response->getBody()->write(json_encode($res));
             return $response;
         }
-        $header = trim($_SERVER['HTTP_AUTHORIZATION']);
-        $token = null;
-        if(preg_match('/Bearer\s(\S+)/', $header, $matches))
-            $token = $matches[1];
-        if(!$token) {
+        $userData = Authentication::validate($_SERVER['HTTP_AUTHORIZATION']);
+        if(!$userData) {
             $res = [
                 'code' => 9003,
-                'message' => 'Authorization header not found'
+                'message' => 'Invalid token'
             ];
             $response->getBody()->write(json_encode($res));
             return $response;
         }
-        $username = Authentication::decode_token($token)->username;
         $res = [
             'code' => 9001,
             'message' => 'Success',
-            'username' => $username
+            'username' => $userData['username']
         ];
         $response->getBody()->write(json_encode($res));
         return $response;
     });    
+
+    
 
 };

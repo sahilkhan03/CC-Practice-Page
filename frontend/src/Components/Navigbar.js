@@ -11,7 +11,7 @@ export default function Navigbar(props) {
                         <Link to="/"> Search </Link>
                     </Nav.Item>
                     <Nav.Item style={{ marginLeft: "20px" }}>
-                        <Link to="/tags/"> Tags </Link>
+                        <Link to="/tags"> Tags </Link>
                     </Nav.Item>
                     {
                         (props.username !== undefined) ?

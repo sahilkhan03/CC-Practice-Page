@@ -18,7 +18,10 @@ class Search extends Component {
         if (val.length === 0)
             this.setState({ "searchResult": [] });
         else {
-            await fetch('api/tags/search/' + val)
+            const jwt = localStorage.getItem('token')
+            let options = {}
+            if (jwt) options.headers = { Authorization: `Bearer ${jwt}` }
+            await fetch('api/tags/search/' + val, options)
                 .then(data => data.json())
                 .then((res) => this.setState({ "searchResult": res }))
         }

@@ -15,7 +15,10 @@ class Tags extends Component {
     }
     componentDidMount() {
         this.props.removeAll()
-        fetch('/api/tags/')
+        const jwt = localStorage.getItem('token')
+        let options = {}
+        if (jwt) options.headers = { Authorization: `Bearer ${jwt}` }
+        fetch('api/tags', options)
             .then(data => data.json())
             .then((res) => {
                 console.log(res);
@@ -25,7 +28,7 @@ class Tags extends Component {
 
     setRedirect(item) {
         this.props.addTag(item);
-        this.props.history.push('/tags/problems/')
+        this.props.history.push('/tags/problems')
     }
 
     render() {
@@ -41,6 +44,11 @@ class Tags extends Component {
                         <Tab eventKey="all" title="All" />
                         <Tab eventKey="author" title="Author" />
                         <Tab eventKey="actual_tag" title="Concepts" />
+                        {(
+                            this.props.username ? 
+                                (<Tab eventKey="private" title="Private" />):
+                                null                            
+                        )}
                     </Tabs>
                     <ListGroup>
                     {

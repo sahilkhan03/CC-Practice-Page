@@ -79,8 +79,8 @@ class App extends Component {
                 <Navigbar username={this.state.username} />
                 <Switch >
                     <Route path="/" exact render={props => <Search selectedTags={this.state.selectedTags} addTag={this.addTag} removeTag={this.removeTag} />} />
-                    <Route path="/tags/problems/" exact render={props => <Problems removeAll={this.removeAll} selectedTags={Array.from(this.state.selectedTags)} />} />
-                    <Route path="/tags/" exact render={props => <Tags removeAll={this.removeAll} addTag={this.addTag} />} />
+                    <Route path="/tags/problems" exact render={props => <Problems removeAll={this.removeAll} selectedTags={Array.from(this.state.selectedTags)} />} />
+                    <Route path="/tags" exact render={props => <Tags removeAll={this.removeAll} username = {this.state.username} addTag={this.addTag} />} />
                     <Route path="/login" exact render={props => <Auth login={this.login} reqType="login" />} />
                     <Route path="/logout" exact render={props => <Auth logout={this.logout} reqType="logout" />} />
                     <Route path="/signup" exact render={props => <Auth login={this.login} reqType="signup" />} />
