@@ -77,7 +77,7 @@ return function (App $app) {
             // If user already exists
             $res = [
                 'code' => 9004,
-                'message' => 'User already exist'
+                'message' => 'User already exists'
             ];
             $response->getBody()->write(json_encode($res));
             return $response;
@@ -92,6 +92,7 @@ return function (App $app) {
         $res = [
             'code' => 9001,
             'message' => 'Success',
+            'username' => $username,
             'token' => Authentication::generate_token($username)
         ];
         $response->getBody()->write(json_encode($res));
@@ -119,7 +120,7 @@ return function (App $app) {
             // Incorrect username/password
             $res = [
                 'code' => 9003,
-                'message' => 'Username or Password incorrect'
+                'message' => 'Username or Password Incorrect'
             ];
             $response->getBody()->write(json_encode($res));
             return $response;

@@ -3,8 +3,7 @@ import { Switch, Route } from 'react-router-dom';
 import Problems from './Problems';
 import Search from './Search';
 import Tags from './Tags';
-import Login from './Login';
-import Logout from './Logout';
+import Auth from './Auth';
 import Navigbar from './Navigbar';
 import './App.css';
 
@@ -24,16 +23,16 @@ class App extends Component {
 
     componentDidMount() {
         const jwt = localStorage.getItem('token')
-        if(jwt && this.state.username === undefined) {
+        if (jwt && this.state.username === undefined) {
             fetch('api/getUser', {
-                headers : {Authorization: `Bearer ${jwt}`}
+                headers: { Authorization: `Bearer ${jwt}` }
             })
-            .then(res => res.json())
-            .then(res => {
-                if(res.code === 9001) {
-                    this.setState({'username': res.username});
-                }
-            })
+                .then(res => res.json())
+                .then(res => {
+                    if (res.code === 9001) {
+                        this.setState({ 'username': res.username });
+                    }
+                })
         }
     }
 
@@ -60,7 +59,7 @@ class App extends Component {
         })
     }
 
-    login({username , token}) {
+    login({ username, token }) {
         localStorage.setItem('token', token);
         this.setState({
             'username': username
@@ -70,20 +69,21 @@ class App extends Component {
     logout() {
         localStorage.removeItem("token");
         this.setState({
-            'username' : undefined
+            'username': undefined
         })
     }
 
     render() {
         return (
             <div className="App">
-                <Navigbar username = {this.state.username} />
+                <Navigbar username={this.state.username} />
                 <Switch >
                     <Route path="/" exact render={props => <Search selectedTags={this.state.selectedTags} addTag={this.addTag} removeTag={this.removeTag} />} />
                     <Route path="/tags/problems/" exact render={props => <Problems removeAll={this.removeAll} selectedTags={Array.from(this.state.selectedTags)} />} />
                     <Route path="/tags/" exact render={props => <Tags removeAll={this.removeAll} addTag={this.addTag} />} />
-                    <Route path="/login" exact render={props => <Login login = {this.login} />} />
-                    <Route path="/logout" exact render={props => <Logout logout = {this.logout}/>} />
+                    <Route path="/login" exact render={props => <Auth login={this.login} reqType="login" />} />
+                    <Route path="/logout" exact render={props => <Auth logout={this.logout} reqType="logout" />} />
+                    <Route path="/signup" exact render={props => <Auth login={this.login} reqType="signup" />} />
                 </Switch>
             </div>
         )

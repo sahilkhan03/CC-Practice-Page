@@ -4,9 +4,9 @@ import { Link } from 'react-router-dom';
 export default function Navigbar(props) {
     return (
         <div>
-            <Navbar bg="light" expand="lg" >
+            <Navbar bg="light" expand="sm" >
                 <Navbar.Brand className="mr-auto">Codechef Practice Page</Navbar.Brand>
-                <Nav className="mr-sm-6">
+                <Nav className="ml-auto">
                     <Nav.Item style={{ marginLeft: "20px" }}>
                         <Link to="/"> Search </Link>
                     </Nav.Item>
@@ -24,7 +24,7 @@ export default function Navigbar(props) {
                         {
                             (props.username !== undefined) ?
                                 (<Link to="/logout"> Logout </Link>) :
-                                (<Link to="/signup"> Signup </Link>)
+                                (<Link to="/signup" > Signup </Link>)
                         }
                     </Nav.Item>
                 </Nav>
