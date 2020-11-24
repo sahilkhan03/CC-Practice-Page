@@ -52,11 +52,11 @@ class Tags extends Component {
                     </Tabs>
                     <ListGroup>
                     {
-                        this.state.tags.map(item => {
+                        this.state.tags.map((item, index) => {
                             let curType = this.state.activeType
                             if (curType === "all" || curType === item.type)
                                 return (
-                                    <ListGroup.Item key={item.id} style={{ "cursor": "pointer" }} onClick={e =>
+                                    <ListGroup.Item key={index} style={{ "cursor": "pointer" }} onClick={e =>
                                         MySwal.fire({
                                             title: item.tag_name,
                                             text: "Type: " + item.type + "  |  Count: " + item.count,

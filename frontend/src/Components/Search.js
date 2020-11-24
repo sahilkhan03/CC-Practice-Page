@@ -45,7 +45,7 @@ class Search extends Component {
                             Array.from(this.props.selectedTags).map((item, index) => {
                                 item = JSON.parse(item)
                                 return (
-                                    <Button variant="primary">
+                                    <Button key = {index} variant="primary">
                                         {item.tag_name} <Badge variant="light" onClick={(e) => this.props.removeTag(item)}>x</Badge>
                                         <span className="sr-only">remove tag</span>
                                     </Button>
@@ -69,10 +69,10 @@ class Search extends Component {
 
                             />
                             <InputGroup.Append>
-                                <Link style={{ "text-decoration": "none" }} to="/tags/problems/" >
+                                <Link to="/tags/problems" >
                                     <Button variant="primary"> Search </Button>
                                 </Link>
-                                <Link style={{ "text-decoration": "none" }} to="/tags/" >
+                                <Link to="/tags" >
                                     <Button variant="primary"> All tags </Button>
                                 </Link>
                             </InputGroup.Append>
@@ -83,8 +83,8 @@ class Search extends Component {
                     <Col>
                         <ListGroup>
                             {
-                                this.state.searchResult.map(tag => (
-                                    <ListGroup.Item key={tag.id} style={{"cursor": "pointer"}} onClick={(e) => this.addTag(tag)}>{tag.tag_name}</ListGroup.Item>
+                                this.state.searchResult.map((tag, idx) => (
+                                    <ListGroup.Item key={idx} style={{"cursor": "pointer"}} onClick={(e) => this.addTag(tag)}>{tag.tag_name}</ListGroup.Item>
                                 ))
                             }
                         </ListGroup>

@@ -22,12 +22,15 @@ return function (App $app) {
             $userData = Authentication::validate($_SERVER['HTTP_AUTHORIZATION']);
             if($userData) {
                 //valid token
-                $sql = "SELECT DISTINCT tag_name FROM private_tags WHERE username = (:username)";
+                $sql = "SELECT tag_name, COUNT(tag_name) as cnt FROM private_tags WHERE username = (:username) GROUP by tag_name";
                 $stmt = $db->prepare($sql);
                 $stmt->execute(['username' => $userData['username']]);
                 while($row = $stmt->fetch(PDO::FETCH_ASSOC)) {
-                    $res[] = (object)['tag_name' => $row['tag_name'], 
-                    'type' => 'private'];
+                    $res[] = (object)[
+                        'tag_name' => $row['tag_name'], 
+                        'type' => 'private',
+                        'count' => $row['cnt']
+                    ];
                 }
             }
         }
@@ -66,22 +69,45 @@ return function (App $app) {
         return $response;
     });
     
-    //Fetch by tag ids
-    $app->get('/api/tags/{tag_id}', function (Request $request, Response $response, $args) {
+    //Fetch problems
+    $app->get('/api/tags/problems', function (Request $request, Response $response, $args) {
         $db = Database::getCon();
-        $tag_list = explode(",", $args['tag_id']);
-        $sql = "SELECT problems.id, problems.contestCode, problems.problemCode, problems.problemName, problems.author, problems.challengeType, problems.successfulSubmissions FROM tag_problem join problems on problems.id = problem_id where ";
+        $tag_list = explode(",", $_GET['filter']);
+        $sql = "SELECT problems.contestCode, problems.problemCode, problems.problemName, problems.author, problems.challengeType, problems.successfulSubmissions FROM tag_problem join problems on problems.problemCode = tag_problem.problemCode where ";
         $len = count($tag_list);
         for($i = 0; $i < $len; $i++) {
-            $sql = $sql." tag_id=".$tag_list[$i];
+            $sql = $sql." tag_name='".$tag_list[$i]."'";
             if($i < $len - 1) $sql = $sql." or ";
         }
         $sql .= " group by problems.problemCode";
         $stmt = $db->prepare($sql);
         $stmt->execute();
-        $response->getBody()->write(json_encode($stmt->fetchAll(PDO::FETCH_ASSOC)));
+        $res = $stmt->fetchAll(PDO::FETCH_ASSOC);
+        if(isset($_SERVER['HTTP_AUTHORIZATION'])) {
+            //Fetch private tags as well
+            $userData = Authentication::validate($_SERVER['HTTP_AUTHORIZATION']);
+            if($userData) {
+                //valid token
+                $sql = "SELECT problems.contestCode, problems.problemCode, problems.problemName, problems.author, problems.challengeType, problems.successfulSubmissions FROM private_tags join problems on problems.problemCode = private_tags.problemCode where username = (:username) and (";
+                $len = count($tag_list);
+                for($i = 0; $i < $len; $i++) {
+                    $sql = $sql." tag_name='".$tag_list[$i]."'";
+                    if($i < $len - 1) $sql = $sql." or ";
+                }
+                $sql .= ") group by problems.problemCode";
+                $stmt = $db->prepare($sql);
+                $stmt->execute(['username' => $userData['username']]);
+                $res = array_merge($res, $stmt->fetchAll(PDO::FETCH_ASSOC));
+            }
+        }
+        $unique_res = [];
+        foreach($res as $val) 
+            $unique_res[serialize($val)] = $val;
+        $res = array_values($unique_res);
+        $response->getBody()->write(json_encode($res));
         return $response;
     });
+        
 
     //Signup
     $app->post('/api/signup', function (Request $request, Response $response, $args) {

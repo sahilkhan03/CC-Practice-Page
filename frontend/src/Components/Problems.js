@@ -13,11 +13,15 @@ class Problems extends Component {
             let list = ""
             this.props.selectedTags.map(tag => {
                 tag = JSON.parse(tag)
-                return list += tag.id + ","
+                return list += tag.tag_name + ","
             })
             list = list.slice(0, -1);
-            console.log(list)
-            fetch('/api/tags/' + list)
+            const jwt = localStorage.getItem('token')
+            let options = {}
+            if (jwt) options.headers = { Authorization: `Bearer ${jwt}` }
+            fetch('/api/tags/problems?' + new URLSearchParams({
+                filter: list
+            }), options)
                 .then(data => data.json())
                 .then((res) => {
                     console.log(res);
@@ -40,7 +44,7 @@ class Problems extends Component {
                         <h1>No Problems Found!</h1>
                         <p> Try selecting different tags! </p>
                         <p>
-                            <Link style={{ "text-decoration": "none" }} to="/" >
+                            <Link to="/" >
                                 <Button variant="primary">Go back to Search</Button>
                             </Link>
                         </p>
@@ -58,7 +62,7 @@ class Problems extends Component {
                             Array.from(this.props.selectedTags).map((item, index) => {
                                 item = JSON.parse(item)
                                 return (
-                                    <ListGroup.Item>
+                                    <ListGroup.Item key = {index}>
                                         {item.tag_name}
                                     </ListGroup.Item>
                                 )
@@ -74,8 +78,8 @@ class Problems extends Component {
                 <Row>
                     <ListGroup>
                         {
-                            this.state.problems.map(item => (
-                                <ListGroup.Item>
+                            this.state.problems.map((item, idx) => (
+                                <ListGroup.Item key = {idx}>
                                     <a href={"https://www.codechef.com/problems/" + item.problemCode} target="_blank" rel="noopener noreferrer"> {item.problemName} </a>
                                 </ListGroup.Item>
                             ))
