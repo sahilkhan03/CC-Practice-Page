@@ -108,6 +108,75 @@ return function (App $app) {
         return $response;
     });
         
+    //Add Tag 
+     $app->post('/api/problem/tag', function (Request $request, Response $response, $args) {
+        if(!isset($_SERVER['HTTP_AUTHORIZATION'])) {
+            $res = [
+                'code' => 9003,
+                'message' => 'Authorization header not found'
+            ];
+            $response->getBody()->write(json_encode($res));
+            return $response;
+        }
+        $userData = Authentication::validate($_SERVER['HTTP_AUTHORIZATION']);
+        if(!$userData) {
+            $res = [
+                'code' => 9003,
+                'message' => 'Invalid token'
+            ];
+            $response->getBody()->write(json_encode($res));
+            return $response;
+        }
+        $problemCode = $_POST['problemCode'];
+        $customTag = $_POST['customTag'];
+        if(!$problemCode or !$customTag) {
+             $res = [
+                'code' => 9003,
+                'message' => 'Invalid data recieved'
+            ];
+            $response->getBody()->write(json_encode($res));
+            return $response;
+        }
+        $db = Database::getCon();
+        //Check whether tag already added for given problem
+        $sql1 = "SELECT * FROM tag_problem WHERE tag_name=(:tag_name) and problemCode=(:problemCode)";
+        $stmt1 = $db->prepare($sql1);
+        $stmt1->execute([
+            'tag_name' => $customTag,
+            'problemCode' => $problemCode
+        ]);
+        //Check in private tags as well
+        $sql2 = "SELECT * FROM private_tags WHERE tag_name=(:tag_name) and problemCode=(:problemCode) and username=(:username)";
+        $stmt2 = $db->prepare($sql2);
+        $stmt2->execute([
+            'tag_name' => $customTag,
+            'problemCode' => $problemCode,
+            'username' => $userData['username']
+        ]);
+        if($stmt1->fetch(PDO::FETCH_ASSOC) || $stmt2->fetch(PDO::FETCH_ASSOC)) {
+            $res = [
+                'code' => 9003,
+                'message' => 'Tag already added'
+            ];
+            $response->getBody()->write(json_encode($res));
+            return $response;
+        }
+        //Insert tag
+        $sql = "INSERT into private_tags values (:username, :problemCode, :tag_name)";
+        $stmt = $db->prepare($sql);
+        $stmt->execute([
+            'tag_name' => $customTag,
+            'problemCode' => $problemCode,
+            'username' => $userData['username']
+        ]);
+        $res = [
+            'code' => 9001,
+            'message' => 'Success',
+        ];
+        $response->getBody()->write(json_encode($res));
+        return $response;
+    });
+
 
     //Signup
     $app->post('/api/signup', function (Request $request, Response $response, $args) {
