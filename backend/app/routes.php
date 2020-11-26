@@ -12,7 +12,7 @@ require 'Authentication.php';
 return function (App $app) {
     //Fetch all tags
     $app->get('/api/tags', function (Request $request, Response $response, $args) {
-        $db = Database::getCon();
+        $db = (new Database)->getCon();
         $sql = "SELECT * FROM tags";
         $stmt = $db->prepare($sql);
         $stmt->execute();
@@ -40,7 +40,7 @@ return function (App $app) {
 
     //Search tags
     $app->get('/api/tags/search/{val}', function (Request $request, Response $response, $args) {
-        $db = Database::getCon();
+        $db = (new Database)->getCon();
         $sql = "SELECT * FROM tags WHERE tag_name LIKE '%";
         $sql .=$args['val'];
         $sql .= "%' ";
@@ -71,7 +71,7 @@ return function (App $app) {
     
     //Fetch problems
     $app->get('/api/tags/problems', function (Request $request, Response $response, $args) {
-        $db = Database::getCon();
+        $db = (new Database)->getCon();
         $tag_list = explode(",", $_GET['filter']);
         $sql = "SELECT problems.contestCode, problems.problemCode, problems.problemName, problems.author, problems.challengeType, problems.successfulSubmissions FROM tag_problem join problems on problems.problemCode = tag_problem.problemCode where ";
         $len = count($tag_list);
@@ -137,7 +137,7 @@ return function (App $app) {
             $response->getBody()->write(json_encode($res));
             return $response;
         }
-        $db = Database::getCon();
+        $db = (new Database)->getCon();
         //Check whether tag already added for given problem
         $sql1 = "SELECT * FROM tag_problem WHERE tag_name=(:tag_name) and problemCode=(:problemCode)";
         $stmt1 = $db->prepare($sql1);
@@ -180,7 +180,7 @@ return function (App $app) {
 
     //Signup
     $app->post('/api/signup', function (Request $request, Response $response, $args) {
-        $db = Database::getCon();
+        $db = (new Database)->getCon();
         $username = $_POST['username'];
         $password = $_POST['password'];
         if(!$username or !$password) {
@@ -223,7 +223,7 @@ return function (App $app) {
 
     //Login
     $app->post('/api/login', function (Request $request, Response $response, $args) {
-        $db = Database::getCon();
+        $db = (new Database)->getCon();
         $username = $_POST['username'];
         $password = $_POST['password'];
         if(!$username or !$password) {

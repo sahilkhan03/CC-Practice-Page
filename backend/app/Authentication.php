@@ -39,7 +39,7 @@ class Authentication
     public function validate($header) {
         $payload = self::decode_token($header);
         if(!$payload) return false;
-        $db = Database::getCon();
+        $db = (new Database)->getCon();
         $sql = "SELECT username from users where username='".$payload->username."'";
         $stmt = $db->prepare($sql);
         $stmt->execute();
