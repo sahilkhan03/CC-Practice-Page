@@ -1,6 +1,6 @@
 import React, { Component } from 'react'
 import { withRouter } from 'react-router-dom'
-import { Alert, Container, Form, Button } from 'react-bootstrap'
+import { Alert, Container, Form, Button, Spinner } from 'react-bootstrap'
 class Auth extends Component {
     constructor(props) {
         super(props)
@@ -8,6 +8,7 @@ class Auth extends Component {
             'username': '',
             'password': '',
             'message': '',
+            'loaded' : true,
             'reqType': this.props.reqType //login/signup/logout
         }
         this.change = this.change.bind(this)
@@ -38,6 +39,7 @@ class Auth extends Component {
 
     async submit(e) {
         e.preventDefault();
+        this.setState({loaded: false})
         let formData = new FormData()
         formData.append('username', this.state.username)
         formData.append('password', this.state.password)
@@ -51,7 +53,8 @@ class Auth extends Component {
                 this.setState({
                     'message': res.message,
                     'username': "",
-                    "password": ""
+                    "password": "",
+                    'loaded': true
                 })
                 if (res.code === 9001) {
                     this.props.login(res);
@@ -61,6 +64,22 @@ class Auth extends Component {
     }
 
     render() {
+        const spinButton = (!this.state.loaded ? 
+            (<Button variant="primary">
+                <Spinner
+                    as="span"
+                    animation="border"
+                    size="sm"
+                    role="status"
+                    aria-hidden="true"
+                />
+                <span className="sr-only">Loading...</span>
+            </Button>) : (
+                <Button variant="primary" type="submit">
+                    {this.state.reqType[0].toUpperCase() + this.state.reqType.slice(1)}
+                </Button>
+            )
+        )
         return (
             <Container fluid="sm" className="w-50 p-3" style={{maxWidth: '500px'}}>
                 {
@@ -79,9 +98,7 @@ class Auth extends Component {
                         <Form.Label>Password</Form.Label>
                         <Form.Control type="password" required name="password" value={this.state.password} onChange={(e) => this.change(e)}  placeholder="Password" />
                     </Form.Group>
-                    <Button variant="primary" type="submit">
-                        {this.state.reqType[0].toUpperCase() + this.state.reqType.slice(1)}
-                    </Button>
+                    { spinButton }
                 </Form>
             </Container>
         )

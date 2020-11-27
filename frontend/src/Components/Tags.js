@@ -35,9 +35,12 @@ class Tags extends Component {
     render() {
         const MySwal = withReactContent(Swal)
         const Spinner = (!this.state.fetched ? (
-            <div className="d-flex justify-content-center">
-                <div className="spinner-border text-primary" role="status">
-                    <span className="sr-only">Loading...</span>
+            <div>
+                <br />
+                <div className="d-flex justify-content-center">
+                    <div className="spinner-border text-primary" role="status">
+                        <span className="sr-only">Loading...</span>
+                    </div>
                 </div>
             </div>) : null
         )
@@ -53,38 +56,37 @@ class Tags extends Component {
                         <Tab eventKey="author" title="Author" />
                         <Tab eventKey="actual_tag" title="Concepts" />
                         {(
-                            this.props.username ? 
-                                (<Tab eventKey="private" title="Private" />):
-                                null                            
+                            this.props.username ?
+                                (<Tab eventKey="private" title="Private" />) :
+                                null
                         )}
                     </Tabs>
-                    <br />
-                    { Spinner }
-                    <ListGroup>
-                    {
-                        this.state.tags.map((item, index) => {
-                            let curType = this.state.activeType
-                            if (curType === "all" || curType === item.type)
-                                return (
-                                    <ListGroup.Item key={index} style={{ "cursor": "pointer" }} onClick={e =>
-                                        MySwal.fire({
-                                            title: item.tag_name,
-                                            text: "Type: " + item.type + "  |  Count: " + item.count,
-                                            showCancelButton: true,
-                                            confirmButtonColor: '#3085d6',
-                                            cancelButtonColor: '#d33',
-                                            confirmButtonText: 'See Problems'
-                                        }).then((result) => {
-                                            if (result.value) {
-                                                this.setRedirect(item)
-                                            }
-                                        })
-                                    }> {item.tag_name} 
-                                    </ListGroup.Item>
-                                )
-                            return null
-                        })
-                    }
+                    {Spinner}
+                    <ListGroup variant="flush">
+                        {
+                            this.state.tags.map((item, index) => {
+                                let curType = this.state.activeType
+                                if (curType === "all" || curType === item.type)
+                                    return (
+                                        <ListGroup.Item variant="" key={index} style={{ "cursor": "pointer" }} onClick={e =>
+                                            MySwal.fire({
+                                                title: item.tag_name,
+                                                text: "Type: " + item.type + "  |  Count: " + item.count,
+                                                showCancelButton: true,
+                                                confirmButtonColor: '#3085d6',
+                                                cancelButtonColor: '#d33',
+                                                confirmButtonText: 'See Problems'
+                                            }).then((result) => {
+                                                if (result.value) {
+                                                    this.setRedirect(item)
+                                                }
+                                            })
+                                        }> {item.tag_name}
+                                        </ListGroup.Item>
+                                    )
+                                return null
+                            })
+                        }
                     </ListGroup>
                 </Container>
             </div>

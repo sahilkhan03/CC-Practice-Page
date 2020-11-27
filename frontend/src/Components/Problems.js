@@ -70,9 +70,12 @@ class Problems extends Component {
 
         const MySwal = withReactContent(Swal)
         const Spinner = (!this.state.fetched ? (
-            <div className="d-flex justify-content-center">
-                <div className="spinner-border text-primary" role="status">
-                    <span className="sr-only">Loading...</span>
+            <div>
+                <br />
+                <div className="d-flex justify-content-center">
+                    <div className="spinner-border text-primary" role="status">
+                        <span className="sr-only">Loading...</span>
+                    </div>
                 </div>
             </div>) : null
         )
@@ -97,7 +100,7 @@ class Problems extends Component {
                     <h5 style={{ fontSize: "18px", paddingTop: "15px" }}><strong> Selected Tags: </strong></h5>
                 </Row>
                 <Row>
-                    <ListGroup horizontal={"xl"}>
+                    <ListGroup variant="flush" horizontal={"xl"}>
                         {
                             Array.from(this.props.selectedTags).map((item, index) => {
                                 item = JSON.parse(item)
@@ -115,10 +118,9 @@ class Problems extends Component {
                 <Row>
                     <h5 style={{ fontSize: "18px", paddingTop: "15px" }}><strong> Problems: </strong></h5> <br />
                 </Row>
-                <br />
                 <Row>
                     {Spinner}
-                    <ListGroup style={{ "cursor": "pointer" }} >
+                    <ListGroup variant="flush" style={{ "cursor": "pointer" }} >
                         {
                             this.state.problems.map((item, idx) => (
                                 <ListGroup.Item key={idx} onClick={e => {
