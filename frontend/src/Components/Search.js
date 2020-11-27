@@ -33,7 +33,7 @@ class Search extends Component {
             }
             if (jwt) options.headers = { Authorization: `Bearer ${jwt}` }
             try {
-                await fetch('api/tags/search/' + val, options)
+                await fetch('https://ccproject-backend.herokuapp.com/api/tags/search/' + val, options)
                     .then(data => data.json())
                     .then((res) => this.setState({ "searchResult": res, "ongoingReq": false }))
             }

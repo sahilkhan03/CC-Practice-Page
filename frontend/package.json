@@ -1,7 +1,4 @@
 {
-  "proxy": "https://ccproject-backend.herokuapp.com/",
-  "homepage": ".",
-  "secure": false,
   "name": "frontend",
   "version": "0.1.0",
   "private": true,

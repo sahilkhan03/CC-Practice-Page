@@ -19,7 +19,7 @@ class Tags extends Component {
         const jwt = localStorage.getItem('token')
         let options = {}
         if (jwt) options.headers = { Authorization: `Bearer ${jwt}` }
-        fetch('api/tags', options)
+        fetch('https://ccproject-backend.herokuapp.com/api/tags', options)
             .then(data => data.json())
             .then((res) => {
                 console.log(res);

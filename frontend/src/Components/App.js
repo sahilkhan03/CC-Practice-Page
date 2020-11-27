@@ -24,7 +24,7 @@ class App extends Component {
     componentDidMount() {
         const jwt = localStorage.getItem('token')
         if (jwt && this.state.username === undefined) {
-            fetch('api/getUser', {
+            fetch('https://ccproject-backend.herokuapp.com/api/getUser', {
                 headers: { Authorization: `Bearer ${jwt}` }
             })
                 .then(res => res.json())

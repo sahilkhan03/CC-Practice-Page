@@ -41,7 +41,7 @@ class Auth extends Component {
         let formData = new FormData()
         formData.append('username', this.state.username)
         formData.append('password', this.state.password)
-        await fetch('api/' + this.state.reqType, {
+        await fetch('https://ccproject-backend.herokuapp.com/api/' + this.state.reqType, {
             method: 'post',
             body: formData
         })

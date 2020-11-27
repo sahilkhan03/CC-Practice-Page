@@ -24,7 +24,7 @@ class Problems extends Component {
             const jwt = localStorage.getItem('token')
             let options = {}
             if (jwt) options.headers = { Authorization: `Bearer ${jwt}` }
-            fetch('/api/tags/problems?' + new URLSearchParams({
+            fetch('https://ccproject-backend.herokuapp.com/api/tags/problems?' + new URLSearchParams({
                 filter: list
             }), options)
                 .then(data => data.json())
@@ -49,7 +49,7 @@ class Problems extends Component {
             body: formData
         }
         if (jwt) options.headers = { Authorization: `Bearer ${jwt}` }
-        await fetch('/api/problem/tag', options)
+        await fetch('https://ccproject-backend.herokuapp.com/api/problem/tag', options)
             .then(res => res.json())
             .then(res => {
                 console.log(res)
