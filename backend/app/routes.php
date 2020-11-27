@@ -35,7 +35,7 @@ return function (App $app) {
             }
         }
         $response->getBody()->write(json_encode($res));
-        return $response;
+        return $response ->withHeader('Access-Control-Allow-Origin', '*');
     });
 
     //Search tags
@@ -66,7 +66,7 @@ return function (App $app) {
             }
         }
         $response->getBody()->write(json_encode($res));
-        return $response;
+        return $response->withHeader('Access-Control-Allow-Origin', '*');
     });
     
     //Fetch problems
@@ -105,7 +105,7 @@ return function (App $app) {
             $unique_res[serialize($val)] = $val;
         $res = array_values($unique_res);
         $response->getBody()->write(json_encode($res));
-        return $response;
+        return $response->withHeader('Access-Control-Allow-Origin', '*');
     });
         
     //Add Tag 
@@ -116,7 +116,7 @@ return function (App $app) {
                 'message' => 'Authorization header not found'
             ];
             $response->getBody()->write(json_encode($res));
-            return $response;
+            return $response->withHeader('Access-Control-Allow-Origin', '*');
         }
         $userData = Authentication::validate($_SERVER['HTTP_AUTHORIZATION']);
         if(!$userData) {
@@ -125,7 +125,7 @@ return function (App $app) {
                 'message' => 'Invalid token'
             ];
             $response->getBody()->write(json_encode($res));
-            return $response;
+            return $response->withHeader('Access-Control-Allow-Origin', '*');
         }
         $problemCode = $_POST['problemCode'];
         $customTag = $_POST['customTag'];
@@ -135,7 +135,7 @@ return function (App $app) {
                 'message' => 'Invalid data recieved'
             ];
             $response->getBody()->write(json_encode($res));
-            return $response;
+            return $response->withHeader('Access-Control-Allow-Origin', '*');
         }
         $db = (new Database)->getCon();
         //Check whether tag already added for given problem
@@ -159,7 +159,7 @@ return function (App $app) {
                 'message' => 'Tag already added'
             ];
             $response->getBody()->write(json_encode($res));
-            return $response;
+            return $response->withHeader('Access-Control-Allow-Origin', '*');
         }
         //Insert tag
         $sql = "INSERT into private_tags values (:username, :problemCode, :tag_name)";
@@ -174,7 +174,7 @@ return function (App $app) {
             'message' => 'Success',
         ];
         $response->getBody()->write(json_encode($res));
-        return $response;
+        return $response->withHeader('Access-Control-Allow-Origin', '*');
     });
 
 
@@ -189,7 +189,7 @@ return function (App $app) {
                 'message' => 'Invalid data recieved'
             ];
             $response->getBody()->write(json_encode($res));
-            return $response;
+            return $response->withHeader('Access-Control-Allow-Origin', '*');
         } 
         $sql = "SELECT * from users where username='".$username."'";
         $stmt = $db->prepare($sql);
@@ -202,7 +202,7 @@ return function (App $app) {
                 'message' => 'User already exists'
             ];
             $response->getBody()->write(json_encode($res));
-            return $response;
+            return $response->withHeader('Access-Control-Allow-Origin', '*');
         }
         // Create new user
         $sql = "INSERT into users (username, password) values (:username, :password)";
@@ -218,7 +218,7 @@ return function (App $app) {
             'token' => Authentication::generate_token($username)
         ];
         $response->getBody()->write(json_encode($res));
-        return $response;
+        return $response->withHeader('Access-Control-Allow-Origin', '*');
     });
 
     //Login
@@ -232,7 +232,7 @@ return function (App $app) {
                 'message' => 'Invalid data recieved'
             ];
             $response->getBody()->write(json_encode($res));
-            return $response;
+            return $response->withHeader('Access-Control-Allow-Origin', '*');
         } 
         $sql = "SELECT * from users where username='".$username."'";
         $stmt = $db->prepare($sql);
@@ -245,7 +245,7 @@ return function (App $app) {
                 'message' => 'Username or Password Incorrect'
             ];
             $response->getBody()->write(json_encode($res));
-            return $response;
+            return $response->withHeader('Access-Control-Allow-Origin', '*');
         } 
         $res = [
             'code' => 9001,
@@ -254,7 +254,7 @@ return function (App $app) {
             'token' => Authentication::generate_token($username)
         ];
         $response->getBody()->write(json_encode($res));
-        return $response;
+        return $response->withHeader('Access-Control-Allow-Origin', '*');
     });
 
     //Get User
@@ -265,7 +265,7 @@ return function (App $app) {
                 'message' => 'Authorization header not found'
             ];
             $response->getBody()->write(json_encode($res));
-            return $response;
+            return $response->withHeader('Access-Control-Allow-Origin', '*');
         }
         $userData = Authentication::validate($_SERVER['HTTP_AUTHORIZATION']);
         if(!$userData) {
@@ -274,7 +274,7 @@ return function (App $app) {
                 'message' => 'Invalid token'
             ];
             $response->getBody()->write(json_encode($res));
-            return $response;
+            return $response->withHeader('Access-Control-Allow-Origin', '*');
         }
         $res = [
             'code' => 9001,
@@ -282,7 +282,7 @@ return function (App $app) {
             'username' => $userData['username']
         ];
         $response->getBody()->write(json_encode($res));
-        return $response;
+        return $response->withHeader('Access-Control-Allow-Origin', '*');
     });    
 
     

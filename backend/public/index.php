@@ -17,4 +17,11 @@ $middleware($app);
 $routes = require __DIR__ . '/../app/routes.php';
 $routes($app);
 
+$app->options('/{routes:.+}', function ($request, $response, $args) {
+    return $response
+                ->withHeader('Access-Control-Allow-Origin', '*')
+                 ->withHeader('Access-Control-Allow-Headers', 'X-Requested-With, Content-Type, Accept, Origin, Authorization')
+                ->withHeader('Access-Control-Allow-Methods', 'GET, POST, PUT, DELETE, PATCH, OPTIONS');
+});
+
 $app->run();
