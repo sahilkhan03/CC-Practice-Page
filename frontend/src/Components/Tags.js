@@ -10,6 +10,7 @@ class Tags extends Component {
         this.state = {
             "tags": [],
             "activeType": "all",
+            "fetched": false
         }
         this.setRedirect = this.setRedirect.bind(this)
     }
@@ -22,7 +23,7 @@ class Tags extends Component {
             .then(data => data.json())
             .then((res) => {
                 console.log(res);
-                this.setState({ "tags": res })
+                this.setState({ "tags": res, fetched: true })
             })
     }
 
@@ -33,6 +34,13 @@ class Tags extends Component {
 
     render() {
         const MySwal = withReactContent(Swal)
+        const Spinner = (!this.state.fetched ? (
+            <div class="d-flex justify-content-center">
+                <div class="spinner-border text-primary" role="status">
+                    <span class="sr-only">Loading...</span>
+                </div>
+            </div>) : null
+        )
         return (
             <div>
                 <Container fluid="md">
@@ -50,6 +58,8 @@ class Tags extends Component {
                                 null                            
                         )}
                     </Tabs>
+                    <br />
+                    { Spinner }
                     <ListGroup>
                     {
                         this.state.tags.map((item, index) => {

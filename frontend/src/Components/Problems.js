@@ -8,7 +8,8 @@ class Problems extends Component {
     constructor(props) {
         super(props);
         this.state = {
-            "problems": []
+            "problems": [],
+            "fetched": false
         }
         this.addCustomTag = this.addCustomTag.bind(this)
     }
@@ -29,7 +30,7 @@ class Problems extends Component {
                 .then(data => data.json())
                 .then((res) => {
                     console.log(res);
-                    this.setState({ "problems": res })
+                    this.setState({ "problems": res, fetched: true })
                 })
         }
     }
@@ -52,7 +53,7 @@ class Problems extends Component {
             .then(res => res.json())
             .then(res => {
                 console.log(res)
-                if (res.code !== 9001) 
+                if (res.code !== 9001)
                     throw new Error(res.message)
                 return res;
             })
@@ -64,10 +65,18 @@ class Problems extends Component {
     }
 
     render() {
-        const MySwal = withReactContent(Swal)
         if (this.props.selectedTags.length === 0)
             return <Redirect to="/" ></Redirect>
-        if (this.state.problems.length === 0)
+
+        const MySwal = withReactContent(Swal)
+        const Spinner = (!this.state.fetched ? (
+            <div class="d-flex justify-content-center">
+                <div class="spinner-border text-primary" role="status">
+                    <span class="sr-only">Loading...</span>
+                </div>
+            </div>) : null
+        )
+        if (this.state.problems.length === 0 && this.state.fetched) {
             return (
                 <Container fluid="md">
                     <Jumbotron>
@@ -81,8 +90,9 @@ class Problems extends Component {
                     </Jumbotron>
                 </Container>
             )
+        }
         return (
-            <Container fluid="md">
+            <Container fluid="md" >
                 <Row>
                     <h5 style={{ fontSize: "18px", paddingTop: "15px" }}><strong> Selected Tags: </strong></h5>
                 </Row>
@@ -105,8 +115,10 @@ class Problems extends Component {
                 <Row>
                     <h5 style={{ fontSize: "18px", paddingTop: "15px" }}><strong> Problems: </strong></h5> <br />
                 </Row>
+                <br />
                 <Row>
-                    <ListGroup>
+                    {Spinner}
+                    <ListGroup style={{ "cursor": "pointer" }} >
                         {
                             this.state.problems.map((item, idx) => (
                                 <ListGroup.Item key={idx} onClick={e => {

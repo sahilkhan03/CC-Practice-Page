@@ -6,24 +6,40 @@ class Search extends Component {
         super(props);
         this.state = {
             searchResult: [],
-            search: ""
+            search: "",
+            ongoingReq: false
         }
         this.handleChange = this.handleChange.bind(this)
         this.addTag = this.addTag.bind(this)
     }
 
     async handleChange(e) {
+        if (this.state.ongoingReq) {
+            this.setState({ "ongoingReq": false })
+            this.state.controller.abort()
+        }
         let val = e.target.value;
         this.setState({ "search": val });
         if (val.length === 0)
             this.setState({ "searchResult": [] });
         else {
+            await this.setState({ "ongoingReq": true, "controller": new AbortController() });
             const jwt = localStorage.getItem('token')
-            let options = {}
+            const { signal } = this.state.controller
+            console.log(signal)
+            let options = {
+                method: 'get',
+                signal
+            }
             if (jwt) options.headers = { Authorization: `Bearer ${jwt}` }
-            await fetch('api/tags/search/' + val, options)
-                .then(data => data.json())
-                .then((res) => this.setState({ "searchResult": res }))
+            try {
+                await fetch('api/tags/search/' + val, options)
+                    .then(data => data.json())
+                    .then((res) => this.setState({ "searchResult": res, "ongoingReq": false }))
+            }
+            catch (err) {
+                console.log(err)
+            }
         }
     }
 
@@ -36,6 +52,13 @@ class Search extends Component {
     }
 
     render() {
+        const Spinner = (this.state.ongoingReq ? (
+            <div class="d-flex justify-content-center">
+                <div class="spinner-border text-primary" role="status">
+                    <span class="sr-only">Loading...</span>
+                </div>
+            </div>) : null
+        )
         return (
             <Container fluid="md">
                 <Row>
@@ -45,7 +68,7 @@ class Search extends Component {
                             Array.from(this.props.selectedTags).map((item, index) => {
                                 item = JSON.parse(item)
                                 return (
-                                    <Button key = {index} variant="primary">
+                                    <Button key={index} variant="primary">
                                         {item.tag_name} <Badge variant="light" onClick={(e) => this.props.removeTag(item)}>x</Badge>
                                         <span className="sr-only">remove tag</span>
                                     </Button>
@@ -81,10 +104,11 @@ class Search extends Component {
                 </Row>
                 <Row>
                     <Col>
+                        {Spinner}
                         <ListGroup>
                             {
                                 this.state.searchResult.map((tag, idx) => (
-                                    <ListGroup.Item key={idx} style={{"cursor": "pointer"}} onClick={(e) => this.addTag(tag)}>{tag.tag_name}</ListGroup.Item>
+                                    <ListGroup.Item key={idx} style={{ "cursor": "pointer" }} onClick={(e) => this.addTag(tag)}>{tag.tag_name}</ListGroup.Item>
                                 ))
                             }
                         </ListGroup>

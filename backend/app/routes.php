@@ -73,7 +73,7 @@ return function (App $app) {
     $app->get('/api/tags/problems', function (Request $request, Response $response, $args) {
         $db = (new Database)->getCon();
         $tag_list = explode(",", $_GET['filter']);
-        $sql = "SELECT problems.contestCode, problems.problemCode, problems.problemName, problems.author, problems.challengeType, problems.successfulSubmissions FROM tag_problem join problems on problems.problemCode = tag_problem.problemCode where ";
+        $sql = "SELECT problems.problemCode, problems.problemName, problems.author, problems.challengeType, problems.successfulSubmissions FROM tag_problem join problems on problems.problemCode = tag_problem.problemCode where ";
         $len = count($tag_list);
         for($i = 0; $i < $len; $i++) {
             $sql = $sql." tag_name='".$tag_list[$i]."'";
@@ -88,7 +88,7 @@ return function (App $app) {
             $userData = Authentication::validate($_SERVER['HTTP_AUTHORIZATION']);
             if($userData) {
                 //valid token
-                $sql = "SELECT problems.contestCode, problems.problemCode, problems.problemName, problems.author, problems.challengeType, problems.successfulSubmissions FROM private_tags join problems on problems.problemCode = private_tags.problemCode where username = (:username) and (";
+                $sql = "SELECT problems.problemCode, problems.problemName, problems.author, problems.challengeType, problems.successfulSubmissions FROM private_tags join problems on problems.problemCode = private_tags.problemCode where username = (:username) and (";
                 $len = count($tag_list);
                 for($i = 0; $i < $len; $i++) {
                     $sql = $sql." tag_name='".$tag_list[$i]."'";
