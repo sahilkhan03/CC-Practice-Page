@@ -87,7 +87,7 @@ class Problems extends Component {
                         <p> Try selecting different tags! </p>
                         <p>
                             <Link to="/" >
-                                <Button variant="primary">Go back to Search</Button>
+                                <Button variant="outline-primary">Go back to Search</Button>
                             </Link>
                         </p>
                     </Jumbotron>

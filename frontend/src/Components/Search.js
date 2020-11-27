@@ -68,7 +68,7 @@ class Search extends Component {
                             Array.from(this.props.selectedTags).map((item, index) => {
                                 item = JSON.parse(item)
                                 return (
-                                    <Button key={index} variant="primary">
+                                    <Button key={index} variant="outline-primary">
                                         {item.tag_name} <Badge variant="light" onClick={(e) => this.props.removeTag(item)}>x</Badge>
                                         <span className="sr-only">remove tag</span>
                                     </Button>
@@ -105,7 +105,7 @@ class Search extends Component {
                 <Row>
                     <Col>
                         {Spinner}
-                        <ListGroup>
+                        <ListGroup variant="flush" >
                             {
                                 this.state.searchResult.map((tag, idx) => (
                                     <ListGroup.Item key={idx} style={{ "cursor": "pointer" }} onClick={(e) => this.addTag(tag)}>{tag.tag_name}</ListGroup.Item>

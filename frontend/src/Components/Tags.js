@@ -68,7 +68,7 @@ class Tags extends Component {
                                 let curType = this.state.activeType
                                 if (curType === "all" || curType === item.type)
                                     return (
-                                        <ListGroup.Item variant="" key={index} style={{ "cursor": "pointer" }} onClick={e =>
+                                        <ListGroup.Item  key={index} style={{ "cursor": "pointer" }} onClick={e =>
                                             MySwal.fire({
                                                 title: item.tag_name,
                                                 text: "Type: " + item.type + "  |  Count: " + item.count,

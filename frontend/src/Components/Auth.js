@@ -65,7 +65,7 @@ class Auth extends Component {
 
     render() {
         const spinButton = (!this.state.loaded ? 
-            (<Button variant="primary">
+            (<Button variant="outline-primary">
                 <Spinner
                     as="span"
                     animation="border"
@@ -75,7 +75,7 @@ class Auth extends Component {
                 />
                 <span className="sr-only">Loading...</span>
             </Button>) : (
-                <Button variant="primary" type="submit">
+                <Button variant="outline-primary" type="submit">
                     {this.state.reqType[0].toUpperCase() + this.state.reqType.slice(1)}
                 </Button>
             )
